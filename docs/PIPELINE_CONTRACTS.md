@@ -50,3 +50,54 @@ Description: Filtered dataset for export.
 Columns displayed:
 
 Ценовая группа Артикул Номенклатура Остаток Ед. Цена (с НДС) flag
+
+## Runtime Directory Contracts
+
+The pipeline uses the following runtime directories:
+
+- `data/incoming/`
+- `data/staging/`
+- `data/output/`
+- `data/validation/`
+- `data/state/`
+
+### Contract
+
+These directories are required for pipeline execution, but their contents are environment-specific runtime artifacts and must not be committed to Git.
+
+The repository keeps these directories only through placeholder files:
+
+- `data/incoming/.gitkeep`
+- `data/staging/.gitkeep`
+- `data/output/.gitkeep`
+- `data/validation/.gitkeep`
+- `data/state/.gitkeep`
+
+### Rules
+
+1. The directories must always exist in the project structure.
+2. Only `.gitkeep` is allowed in Git inside these directories.
+3. Production files generated or consumed by the pipeline must remain local and untracked.
+4. Cleanup and refactoring tasks must preserve these directories and their `.gitkeep` files.
+5. Any pipeline step that writes runtime artifacts must write them only into the designated runtime directories.
+
+### Examples of disallowed files in Git
+
+- `data/incoming/*.xls`
+- `data/incoming/*.xlsx`
+- `data/staging/*.xlsx`
+- `data/output/*.xlsx`
+- `data/validation/*`
+- `data/state/*`
+
+### Reference Data Exception
+
+Files stored in `data/reference/` are treated separately.  
+They are not runtime artifacts and may be version-controlled when they are required for reproducible pipeline behavior.
+
+### Git Enforcement
+
+This contract is enforced through:
+- `.gitignore`
+- `.gitkeep` placeholders
+- `pre-commit` hook checks

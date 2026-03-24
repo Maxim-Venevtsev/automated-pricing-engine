@@ -31,7 +31,42 @@ application/ │ ├── infrastructure/ │ └── domain/ │ └── t
 
 ------------------------------------------------------------------------
 
-# 3. Pipeline Entry Point
+# 3. Runtime Data Policy
+
+The following directories are runtime-only and must not contain production data in Git:
+
+- `data/incoming/`
+- `data/staging/`
+- `data/output/`
+- `data/validation/`
+- `data/state/`
+
+These folders are preserved in the repository structure only via `.gitkeep` files.
+
+Allowed in Git:
+
+- `data/incoming/.gitkeep`
+- `data/staging/.gitkeep`
+- `data/output/.gitkeep`
+- `data/validation/.gitkeep`
+- `data/state/.gitkeep`
+
+Not allowed in Git:
+
+- incoming Excel files
+- intermediate staging artifacts
+- generated output price lists
+- validation exports
+- pipeline state files
+
+Reference files in `data/reference/` are version-controlled separately and are not part of runtime artifact storage.
+
+
+
+
+
+
+# 4. Pipeline Entry Point
 
 Run pipeline:
 
@@ -43,7 +78,7 @@ Optional flags:
 
 ------------------------------------------------------------------------
 
-# 4. Data Contracts
+# 5. Data Contracts
 
 After ingestion_step1_clean:
 
@@ -61,7 +96,7 @@ After export_build:
 
 ------------------------------------------------------------------------
 
-# 5. Pipeline Stages
+# 6. Pipeline Stages
 
 STAGE 1 --- INGESTION
 
@@ -94,7 +129,7 @@ email_delivery.py
 
 ------------------------------------------------------------------------
 
-# 6. Reference Files
+# 7. Reference Files
 
 dealers.csv --- dealer email list\
 liquidity_coef.xlsx --- liquidity coefficients\
@@ -104,7 +139,7 @@ dealer.txt --- email template
 
 ------------------------------------------------------------------------
 
-# 7. State Files
+# 8. State Files
 
 data/state/items_presence_registry.csv
 
@@ -117,7 +152,7 @@ is_active
 
 ------------------------------------------------------------------------
 
-# 8. Key Business Rules
+# 9. Key Business Rules
 
 NEW item:
 
@@ -133,7 +168,7 @@ price_group == HYUNDAI/KIA
 
 ------------------------------------------------------------------------
 
-# 9. Performance Bottlenecks
+# 10. Performance Bottlenecks
 
 1.  Multiple Excel read/write operations\
 2.  pandas → DB → pandas round trips\
@@ -142,7 +177,7 @@ price_group == HYUNDAI/KIA
 
 ------------------------------------------------------------------------
 
-# 10. Optimization Roadmap
+# 11. Optimization Roadmap
 
 Phase 1 --- Safe Refactor
 
@@ -161,7 +196,7 @@ caching liquidity
 
 ------------------------------------------------------------------------
 
-# 11. Testing
+# 12. Testing
 
 Recommended tests:
 
@@ -172,7 +207,7 @@ export filters
 
 ------------------------------------------------------------------------
 
-# 12. Requirements
+# 13. Requirements
 
 Python 3.10+\
 pandas\
