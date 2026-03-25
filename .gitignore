@@ -71,6 +71,26 @@ data/validation/*
 data/state/*
 
 ############################################
+# FUTURE RUNTIME ARTIFACTS
+############################################
+
+# Base price snapshots
+data/reference/base_price_snapshots/*
+!data/reference/base_price_snapshots/.gitkeep
+
+# Send manifests / delivery metadata
+data/state/send_manifests/*
+!data/state/send_manifests/.gitkeep
+
+# Send history / dispatch logs
+data/state/send_history/*
+!data/state/send_history/.gitkeep
+
+# Profile-based export artifacts
+data/output/profiles/*
+!data/output/profiles/.gitkeep
+
+############################################
 # KEEP FOLDER STRUCTURE
 ############################################
 
