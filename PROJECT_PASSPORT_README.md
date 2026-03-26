@@ -215,3 +215,14 @@ openpyxl\
 MySQL connector
 
 Environment variables via `.env`.
+
+# 14. Configuration Model
+
+The project uses four configuration layers:
+
+- runtime configuration
+- reference configuration
+- export profile configuration
+- delivery profile configuration
+
+At the contracts-cleanup stage, these layers are documented and separated conceptually, while future feature branches will implement the corresponding business behavior.
