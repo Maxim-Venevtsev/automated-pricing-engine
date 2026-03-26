@@ -14,27 +14,61 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
 # =========================================================
-# DATA DIRECTORIES (new structure)
+# BASE DIRECTORIES
 # =========================================================
 
 DATA_DIR = PROJECT_ROOT / "data"
+LOG_DIR = PROJECT_ROOT / "logs"
+
+# =========================================================
+# RUNTIME DIRECTORIES
+# =========================================================
 
 INCOMING_DIR = DATA_DIR / "incoming"
 STAGING_DIR = DATA_DIR / "staging"
 OUTPUT_DIR = DATA_DIR / "output"
 VALIDATION_DIR = DATA_DIR / "validation"
-REFERENCE_DIR = DATA_DIR / "reference"
 STATE_DIR = DATA_DIR / "state"
-LOG_DIR = PROJECT_ROOT / "logs"
 
-# Ensure directories exist
+# =========================================================
+# REFERENCE DIRECTORIES
+# =========================================================
+
+REFERENCE_DIR = DATA_DIR / "reference"
+EMAIL_TEMPLATES_DIR = REFERENCE_DIR / "email_templates"
+
+# =========================================================
+# FUTURE / RESERVED DIRECTORIES (contracts-cleanup stage)
+# =========================================================
+
+BASE_PRICE_SNAPSHOTS_DIR = REFERENCE_DIR / "base_price_snapshots"
+SEND_MANIFESTS_DIR = STATE_DIR / "send_manifests"
+SEND_HISTORY_DIR = STATE_DIR / "send_history"
+OUTPUT_PROFILES_DIR = OUTPUT_DIR / "profiles"
+
+# =========================================================
+# ENSURE DIRECTORIES EXIST
+# =========================================================
+
 for directory in [
+    # Runtime
     INCOMING_DIR,
     STAGING_DIR,
     OUTPUT_DIR,
     VALIDATION_DIR,
-    REFERENCE_DIR,
     STATE_DIR,
+
+    # Reference
+    REFERENCE_DIR,
+    EMAIL_TEMPLATES_DIR,
+
+    # Future reserved
+    BASE_PRICE_SNAPSHOTS_DIR,
+    SEND_MANIFESTS_DIR,
+    SEND_HISTORY_DIR,
+    OUTPUT_PROFILES_DIR,
+
+    # Logs
     LOG_DIR,
 ]:
     directory.mkdir(parents=True, exist_ok=True)
@@ -55,15 +89,7 @@ ALLOWED_PRICE_GROUPS_FILE = REFERENCE_DIR / "allowed_price_groups.xlsx"
 ITEMS_PRESENCE_REGISTRY = STATE_DIR / "items_presence_registry.csv"
 
 # =========================================================
-# PRICING CONSTANTS
-# =========================================================
-
-NEW_DAYS = 14
-RESTART_THRESHOLD_DAYS = 90
-LIQUIDITY_WINDOW_DAYS = 28
-
-# =========================================================
-# IMAP
+# IMAP CONFIG
 # =========================================================
 
 IMAP_SERVER = os.getenv("IMAP_SERVER")
@@ -72,7 +98,7 @@ IMAP_EMAIL = os.getenv("IMAP_EMAIL")
 IMAP_PASSWORD = os.getenv("IMAP_PASSWORD")
 
 # =========================================================
-# SMTP
+# SMTP CONFIG
 # =========================================================
 
 SMTP_SERVER = os.getenv("SMTP_SERVER")
@@ -81,7 +107,7 @@ SMTP_EMAIL = os.getenv("SMTP_EMAIL")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 # =========================================================
-# MYSQL
+# MYSQL CONFIG
 # =========================================================
 
 MYSQL_CONFIG = {

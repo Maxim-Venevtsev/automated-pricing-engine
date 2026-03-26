@@ -2,7 +2,8 @@ import logging
 import pandas as pd
 from datetime import datetime
 
-from configs.settings import STAGING_DIR, STATE_DIR, NEW_DAYS, RESTART_THRESHOLD_DAYS
+from configs.settings import STAGING_DIR, STATE_DIR
+from configs.constants import NEW_DAYS, RESTART_THRESHOLD_DAYS
 
 logger = logging.getLogger(__name__)
 

@@ -195,3 +195,20 @@ In particular, this branch does not yet implement:
 - profile-based export generation
 - profile-based delivery routing
 - separate sender identities by profile
+
+### Derived Reference Artifacts
+
+Some files may be generated or refreshed by the pipeline, while still serving as controlled reference inputs for downstream steps.
+
+Example:
+
+- `data/reference/liquidity_category.xlsx`
+
+Such files are treated as derived reference artifacts.
+
+Rules:
+
+1. They may be updated by the pipeline.
+2. They are intentionally stored in reference directories when downstream logic depends on them as stable categorized inputs.
+3. They must not be treated as disposable runtime artifacts.
+4. Their lifecycle and storage location must be explicitly documented to avoid confusion with pure runtime outputs.
