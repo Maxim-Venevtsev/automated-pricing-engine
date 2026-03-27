@@ -47,13 +47,16 @@
 
 # System Layers
 
-## Pipelines
-
-Orchestration layer.
+## Pipelines (Orchestration Layer)
 
     pipelines/full_pipeline.py
 
-Responsible for running stages.
+Responsible for:
+
+- sequencing pipeline stages
+- logging execution flow
+- isolating step execution
+- preserving stage boundaries
 
 ------------------------------------------------------------------------
 
@@ -61,10 +64,12 @@ Responsible for running stages.
 
 Business logic:
 
-pricing\
-ingestion\
-export\
-liquidity
+- ingestion
+- pricing
+- liquidity
+- export
+
+Each module is responsible for a single transformation step.
 
 ------------------------------------------------------------------------
 
@@ -72,6 +77,19 @@ liquidity
 
 External systems:
 
-email\
-database\
-file system
+- email
+- database
+- file system
+
+------------------------------------------------------------------------
+
+## Contracts-Cleanup Notes
+
+At the contracts-cleanup stage:
+
+- orchestration logic is stabilized without changing business behavior
+- runtime directories are strictly separated from reference data
+- future extension points are prepared (profiles, snapshots, delivery routing)
+- configuration boundaries are enforced (settings vs constants)
+
+This architecture is now ready for controlled feature expansion.

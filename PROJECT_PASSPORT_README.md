@@ -61,10 +61,7 @@ Not allowed in Git:
 
 Reference files in `data/reference/` are version-controlled separately and are not part of runtime artifact storage.
 
-
-
-
-
+------------------------------------------------------------------------
 
 # 4. Pipeline Entry Point
 
@@ -86,13 +83,13 @@ price_group article name stock unit price
 
 After pricing_apply_liquidity:
 
--   liquidity_category
--   liquidity_coef
+- liquidity_category
+- liquidity_coef
 
 After export_build:
 
--   flag
--   liquidity_category
+- flag
+- liquidity_category
 
 ------------------------------------------------------------------------
 
@@ -100,28 +97,28 @@ After export_build:
 
 STAGE 1 --- INGESTION
 
-1.  ingestion_email.py\
-2.  ingestion_step1_clean.py\
-3.  ingestion_step2_validate.py\
-4.  ingestion_step3_filter.py\
-5.  ingestion_step4_normalize.py
+1. ingestion_email.py
+2. ingestion_step1_clean.py
+3. ingestion_step2_validate.py
+4. ingestion_step3_filter.py
+5. ingestion_step4_normalize.py
 
 STAGE 2 --- DATABASE & LIQUIDITY
 
-1.  ingestion_snapshot.py\
-2.  liquidity_recalculation.py\
-3.  liquidity_export.py
+1. ingestion_snapshot.py
+2. liquidity_recalculation.py
+3. liquidity_export.py
 
 STAGE 3 --- PRICING
 
-1.  pricing_apply_liquidity.py\
-2.  pricing_core.py\
-3.  registry_update.py
+1. pricing_apply_liquidity.py
+2. pricing_core.py
+3. registry_update.py
 
 STAGE 4 --- OUTPUT
 
-1.  export_build.py\
-2.  export_format.py
+1. export_build.py
+2. export_format.py
 
 STAGE 5 --- DELIVERY
 
@@ -131,10 +128,10 @@ email_delivery.py
 
 # 7. Reference Files
 
-dealers.csv --- dealer email list\
-liquidity_coef.xlsx --- liquidity coefficients\
-liquidity_category.xlsx --- calculated liquidity\
-allowed_price_groups.xlsx --- allowed groups\
+dealers.csv --- dealer email list
+liquidity_coef.xlsx --- liquidity coefficients
+liquidity_category.xlsx --- derived reference (pipeline-updated)
+allowed_price_groups.xlsx --- allowed groups
 dealer.txt --- email template
 
 ------------------------------------------------------------------------
@@ -145,9 +142,9 @@ data/state/items_presence_registry.csv
 
 Columns:
 
-article\
-first_seen\
-last_seen\
+article
+first_seen
+last_seen
 is_active
 
 ------------------------------------------------------------------------
@@ -170,10 +167,10 @@ price_group == HYUNDAI/KIA
 
 # 10. Performance Bottlenecks
 
-1.  Multiple Excel read/write operations\
-2.  pandas → DB → pandas round trips\
-3.  CSV registries\
-4.  Liquidity recalculation scans
+1. Multiple Excel read/write operations
+2. pandas → DB → pandas round trips
+3. CSV registries
+4. Liquidity recalculation scans
 
 ------------------------------------------------------------------------
 
@@ -181,17 +178,17 @@ price_group == HYUNDAI/KIA
 
 Phase 1 --- Safe Refactor
 
-remove intermediate Excel files\
+remove intermediate Excel files
 unify dataframe pipeline
 
 Phase 2 --- DB Optimization
 
-SQLAlchemy\
+SQLAlchemy
 connection pooling
 
 Phase 3 --- Scaling
 
-dealer‑specific pricing\
+dealer-specific pricing
 caching liquidity
 
 ------------------------------------------------------------------------
@@ -200,21 +197,23 @@ caching liquidity
 
 Recommended tests:
 
-ingestion validation\
-pricing rules\
-registry logic\
+ingestion validation
+pricing rules
+registry logic
 export filters
 
 ------------------------------------------------------------------------
 
 # 13. Requirements
 
-Python 3.10+\
-pandas\
-openpyxl\
+Python 3.10+
+pandas
+openpyxl
 MySQL connector
 
 Environment variables via `.env`.
+
+------------------------------------------------------------------------
 
 # 14. Configuration Model
 
@@ -226,3 +225,17 @@ The project uses four configuration layers:
 - delivery profile configuration
 
 At the contracts-cleanup stage, these layers are documented and separated conceptually, while future feature branches will implement the corresponding business behavior.
+
+------------------------------------------------------------------------
+
+# 15. Stability Check After Contracts Cleanup
+
+After cleanup of Git contracts, configuration boundaries, runtime paths, and pipeline orchestration, the pipeline must be re-run to confirm that:
+
+- imports remain valid
+- runtime directories are used correctly
+- output generation is preserved
+- state updates are preserved
+- delivery safeguards remain active
+
+This branch keeps functional behavior stable while preparing the codebase for future feature branches.
