@@ -212,3 +212,37 @@ Rules:
 2. They are intentionally stored in reference directories when downstream logic depends on them as stable categorized inputs.
 3. They must not be treated as disposable runtime artifacts.
 4. Their lifecycle and storage location must be explicitly documented to avoid confusion with pure runtime outputs.
+
+## Ingestion Format Compatibility
+
+The pipeline supports multiple supplier input formats.
+
+### Previous Format
+
+- header located at fixed row index
+- columns:
+  - Ценовая группа → price_group
+  - Артикул → article
+  - Номенклатура → name
+  - Остаток → stock
+  - Цена → price
+  - Ед. → unit
+
+### New Format (Updated Supplier File)
+
+- header row is dynamic (auto-detected)
+- column mapping:
+  - Бренд → price_group
+  - Артикул → article
+  - Номенклатура → name
+  - Остаток → stock
+  - Цена → price
+
+### Normalization Rules
+
+- header row is detected dynamically via `detect_header_row()`
+- if `unit` column is missing → default value `"шт"`
+- if `article` is empty → fallback to first token of `Номенклатура`
+- both formats are normalized into a unified internal schema
+
+This ensures backward compatibility with legacy files and support for new supplier formats.

@@ -99,6 +99,8 @@ STAGE 1 --- INGESTION
 
 1. ingestion_email.py
 2. ingestion_step1_clean.py
+- supports multiple supplier file formats (legacy + updated structure)
+- automatic header detection and column mapping
 3. ingestion_step2_validate.py
 4. ingestion_step3_filter.py
 5. ingestion_step4_normalize.py
