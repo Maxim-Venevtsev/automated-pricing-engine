@@ -2,7 +2,8 @@
 
 Production-grade data pipeline for automated pricing in wholesale automotive parts.
 
-This project processes supplier price lists, applies pricing logic (including liquidity-based adjustments), generates dealer-ready Excel outputs, and delivers them automatically via email.
+This project processes supplier price lists, applies pricing logic (including liquidity-based adjustments), generates dealer-ready Excel outputs, and delivers them automatically via email. 
+It handles evolving supplier formats with backward compatibility.
 
 ---
 
@@ -12,6 +13,8 @@ This project processes supplier price lists, applies pricing logic (including li
 
   * fetch supplier Excel files via email
   * normalize and clean raw data
+  * supports multiple supplier file formats (legacy + updated structure)
+  * automatic header detection and column mapping
 
 * 🔄 **Multi-stage data transformation**
 
