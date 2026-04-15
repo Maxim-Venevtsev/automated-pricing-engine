@@ -246,3 +246,149 @@ The pipeline supports multiple supplier input formats.
 - both formats are normalized into a unified internal schema
 
 This ensures backward compatibility with legacy files and support for new supplier formats.
+
+------------------------------------------------------------------------
+
+## Reference Cost Update Contracts
+
+The project introduces a separate reference update workflow for cost data.
+
+This workflow is intentionally designed as a mini-pipeline that does not modify the main pricing pipeline at the initial stage.
+
+### Purpose
+
+The goal is to maintain an up-to-date consolidated cost reference (`master_cost.xlsx`) and later use it as the authoritative source for rebuilding `base_price.xlsx`.
+
+### Input Layers
+
+#### 1. Raw Cost Update Files
+
+Location:
+
+- `data/incoming/cost_updates/`
+
+These files may arrive in different supplier-specific formats and are placed manually into the project before processing.
+
+#### 2. Cleaned Cost Update Files
+
+Location:
+
+- `data/staging/cost_updates/`
+
+Output example:
+
+- `cost_update_clean_YYYY_MM_DD.xlsx`
+
+These files represent cleaned and normalized cost updates that are safe for matching and merging.
+
+#### 3. Consolidated Master Cost Reference
+
+Location:
+
+- `data/reference/master_cost.xlsx`
+
+This file stores the current consolidated cost reference used for future base price rebuilding.
+
+### Normalized Master Cost Schema
+
+The normalized schema for cost reference data is:
+
+- `article`
+- `price_group`
+- `name`
+- `unit`
+- `cost`
+
+Recommended audit fields:
+
+- `source_file`
+- `first_seen_in_cost`
+- `last_updated_in_cost`
+
+### Cost Update Cleaning Rules
+
+The cost update cleaning step must normalize different supplier formats into the unified master cost schema.
+
+#### Article normalization
+
+Rules:
+
+1. `article` must always be read and stored as string.
+2. Leading zeros must be preserved.
+3. Hyphen `-` inside the article must be removed in the normalized value.
+4. Raw source value should remain traceable during cleaning.
+5. Empty or invalid articles must not silently enter the consolidated reference.
+
+Recommended approach:
+
+- keep `raw_article` during cleaning
+- produce normalized `article` for matching
+
+#### Cost column identification
+
+The workflow must prefer explicit header-based matching.
+
+Header candidates for cost may include:
+
+- `цена`
+- `закуп`
+- `себестоимость`
+- `стоимость`
+
+Header candidates for stock/quantity may include:
+
+- `остаток`
+- `количество`
+- `наличие`
+
+If header-based identification is not reliable, secondary heuristics may be used:
+
+1. stock columns tend to contain integer-only values
+2. cost columns may contain decimal values
+
+If the workflow cannot reliably distinguish cost from stock, processing must fail safely and require manual review.
+
+### Master Cost Update Contract
+
+When `master_cost.xlsx` already exists:
+
+- new `article` values must be appended
+- existing `article` values must be updated
+- matching must use normalized `article`
+
+When `master_cost.xlsx` does not exist:
+
+- it must be initialized from the first valid cleaned cost update
+
+### Audit and State Tracking
+
+The workflow must record processed updates in:
+
+- `data/state/reference_updates/`
+
+Recommended tracked metadata:
+
+- source filename
+- processed timestamp
+- rows total
+- rows added
+- rows updated
+- processing status
+
+### Boundary of Responsibility
+
+At this stage, the cost update mini-pipeline is independent from the main pricing pipeline.
+
+It is responsible only for:
+
+- accepting raw cost updates
+- cleaning and normalizing them
+- updating `master_cost.xlsx`
+- preserving auditability
+
+It does not yet:
+
+- modify `full_pipeline.py`
+- rebuild `base_price.xlsx`
+- apply liquidity rules
+- generate client-specific price outputs
