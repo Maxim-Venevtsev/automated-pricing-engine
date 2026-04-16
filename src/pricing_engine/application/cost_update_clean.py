@@ -13,19 +13,47 @@ def normalize_article(x):
     return x
 
 
-def detect_cost_column(df):
-    # 1. try by header
-    for col in df.columns:
-        col_lower = str(col).lower()
-        if any(k in col_lower for k in ["цена", "стоим", "закуп"]):
-            return col
+def find_column(df, candidates, required=False, field_name="column"):
+    normalized = {str(col).strip().lower(): col for col in df.columns}
 
-    # 2. fallback by values
-    numeric_cols = df.select_dtypes(include=["number"]).columns
+    for candidate in candidates:
+        candidate = candidate.lower()
+        for norm_name, original_name in normalized.items():
+            if candidate == norm_name or candidate in norm_name:
+                return original_name
+
+    if required:
+        raise ValueError(f"{field_name.capitalize()} not found")
+
+    return None
+
+
+def detect_cost_column(df):
+    # 1. explicit header-based detection
+    explicit = find_column(
+        df,
+        candidates=[
+            "cost",
+            "себестоимость",
+            "закуп",
+            "стоимость",
+            "цена закуп",
+        ],
+        required=False,
+        field_name="cost column",
+    )
+    if explicit is not None:
+        return explicit
+
+    # 2. fallback by numeric pattern
+    numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
 
     for col in numeric_cols:
         sample = df[col].dropna().head(50)
-        if (sample % 1 != 0).any():  # has decimals
+        if len(sample) == 0:
+            continue
+        # cost often has decimals, stock often integer-only
+        if (sample % 1 != 0).any():
             return col
 
     raise ValueError("Cost column could not be reliably detected")
@@ -34,39 +62,65 @@ def detect_cost_column(df):
 def clean_cost_file(input_path, output_dir):
     df = pd.read_excel(input_path)
 
-    # detect cost column
+    # --- required columns
+    article_col = find_column(
+        df,
+        candidates=["article", "артикул", "артик"],
+        required=True,
+        field_name="article column",
+    )
+
     cost_col = detect_cost_column(df)
 
-    # detect article column
-    article_col = None
-    for col in df.columns:
-        if "артик" in str(col).lower():
-            article_col = col
-            break
+    # --- optional columns
+    name_col = find_column(
+        df,
+        candidates=["name", "номенклатура"],
+        required=False,
+        field_name="name column",
+    )
 
-    if not article_col:
-        raise ValueError("Article column not found")
+    price_group_col = find_column(
+        df,
+        candidates=["price_group", "ценовая группа", "бренд"],
+        required=False,
+        field_name="price_group column",
+    )
 
-    # build clean df
+    unit_col = find_column(
+        df,
+        candidates=["unit", "ед", "ед."],
+        required=False,
+        field_name="unit column",
+    )
+
+    # --- build normalized dataframe
     clean_df = pd.DataFrame()
+
     clean_df["article"] = df[article_col].apply(normalize_article)
-    clean_df["cost"] = df[cost_col]
+    clean_df["cost"] = pd.to_numeric(df[cost_col], errors="coerce")
 
-    # optional fields
-    for col in df.columns:
-        col_lower = str(col).lower()
+    if price_group_col is not None:
+        clean_df["price_group"] = df[price_group_col]
+    else:
+        clean_df["price_group"] = None
 
-        if "номен" in col_lower:
-            clean_df["name"] = df[col]
+    if name_col is not None:
+        clean_df["name"] = df[name_col]
+    else:
+        clean_df["name"] = None
 
-        if "груп" in col_lower or "бренд" in col_lower:
-            clean_df["price_group"] = df[col]
+    if unit_col is not None:
+        clean_df["unit"] = df[unit_col]
+    else:
+        clean_df["unit"] = "шт"
 
-        if "ед" in col_lower:
-            clean_df["unit"] = df[col]
+    # keep only valid rows
+    clean_df = clean_df[clean_df["article"].notna()].copy()
+    clean_df = clean_df[clean_df["cost"].notna()].copy()
 
-    # drop empty articles
-    clean_df = clean_df[clean_df["article"].notna()]
+    # reorder columns
+    clean_df = clean_df[["article", "price_group", "name", "unit", "cost"]]
 
     # save
     output_dir = Path(output_dir)
