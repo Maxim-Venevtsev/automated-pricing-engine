@@ -38,13 +38,21 @@ REFERENCE_DIR = DATA_DIR / "reference"
 EMAIL_TEMPLATES_DIR = REFERENCE_DIR / "email_templates"
 
 # =========================================================
-# FUTURE / RESERVED DIRECTORIES (contracts-cleanup stage)
+# RESERVED / EXTENDED DIRECTORIES
 # =========================================================
 
 BASE_PRICE_SNAPSHOTS_DIR = REFERENCE_DIR / "base_price_snapshots"
 SEND_MANIFESTS_DIR = STATE_DIR / "send_manifests"
 SEND_HISTORY_DIR = STATE_DIR / "send_history"
 OUTPUT_PROFILES_DIR = OUTPUT_DIR / "profiles"
+
+# ---------------------------------------------------------
+# Reference cost update mini-pipeline
+# ---------------------------------------------------------
+
+INCOMING_COST_UPDATES_DIR = INCOMING_DIR / "cost_updates"
+STAGING_COST_UPDATES_DIR = STAGING_DIR / "cost_updates"
+REFERENCE_UPDATES_STATE_DIR = STATE_DIR / "reference_updates"
 
 # =========================================================
 # ENSURE DIRECTORIES EXIST
@@ -62,11 +70,16 @@ for directory in [
     REFERENCE_DIR,
     EMAIL_TEMPLATES_DIR,
 
-    # Future reserved
+    # Reserved / extended
     BASE_PRICE_SNAPSHOTS_DIR,
     SEND_MANIFESTS_DIR,
     SEND_HISTORY_DIR,
     OUTPUT_PROFILES_DIR,
+
+    # Reference cost update mini-pipeline
+    INCOMING_COST_UPDATES_DIR,
+    STAGING_COST_UPDATES_DIR,
+    REFERENCE_UPDATES_STATE_DIR,
 
     # Logs
     LOG_DIR,
@@ -81,6 +94,7 @@ BASE_PRICE_FILE = REFERENCE_DIR / "base_price.xlsx"
 LIQUIDITY_COEF_FILE = REFERENCE_DIR / "liquidity_coef.xlsx"
 LIQUIDITY_CATEGORY_FILE = REFERENCE_DIR / "liquidity_category.xlsx"
 ALLOWED_PRICE_GROUPS_FILE = REFERENCE_DIR / "allowed_price_groups.xlsx"
+MASTER_COST_FILE = REFERENCE_DIR / "master_cost.xlsx"
 
 # =========================================================
 # STATE FILES
