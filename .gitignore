@@ -70,6 +70,16 @@ data/output/*
 data/validation/*
 data/state/*
 
+# Allow structure for cost update pipeline
+!data/incoming/cost_updates/
+!data/incoming/cost_updates/.gitkeep
+
+!data/staging/cost_updates/
+!data/staging/cost_updates/.gitkeep
+
+!data/state/reference_updates/
+!data/state/reference_updates/.gitkeep
+
 ############################################
 # FUTURE RUNTIME ARTIFACTS
 ############################################
